@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JIRA CORS Test</title>
+</head>
+<body>
+
+<label for="username">Username: <input id="username" value="isimmons"></label><br/>
+<label for="password">Password: <input id="password" type="password"></label><br/>
+<label for="proxy">Proxy: <input id="proxy" value="http://localhost:8080/sharpspring.atlassian.net:443"></label><br/>
+<input type="button" id="submit" value="Submit">
+<div id="result"></div>
+
+<script>
+    'use strict';
+    var resultDiv = document.getElementById('result');
+    function showMessage(msg) {
+        resultDiv.appendChild(document.createTextNode(msg));
+        resultDiv.appendChild(document.createElement('br'));
+    }
+
+    document.getElementById('submit').onclick = function() {
+        request(document.getElementById('proxy').value + '/rest/api/2/myself');
+    };
+
+    var xhr;
+
+    function request(url, headers) {
+        showMessage('Sending request to ' + url);
+        if (headers) {
+            for(let header of headers) {
+                showMessage('with header ' + header);
+            }
+        }
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = readyStateChange;
+        xhr.open('GET', url);
+        xhr.setRequestHeader("Authorization", "Basic " + btoa(document.getElementById('username').value + ":" + document.getElementById('password').value));
+        xhr.send();
+    }
+
+    function readyStateChange() {
+        if (xhr.readyState !== XMLHttpRequest.DONE) {
+            //Not done yet, don't care
+            return;
+        }
+        if (xhr.status === 200) {
+            showMessage(xhr.responseText);
+        } else {
+            showMessage('There was a problem with the request.');
+            showMessage(xhr.responseText);
+        }
+    }
+</script>
+
+</body>
+</html>
