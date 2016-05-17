@@ -31,29 +31,26 @@
 </div>
 
 <script>
-    'use strict';
-    document.getElementById('saveCredentials').onclick = function() {
-        request(document.getElementById('proxy').value + '/rest/api/2/myself');
-    };
+'use strict';
+document.getElementById('saveCredentials').onclick = function() {
+    request(document.getElementById('proxy').value + '/rest/api/2/myself');
+};
 
-    var xhr;
-
-    function request(url) {
-        console.log('Sending request to ' + url);
-        xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status !== 200) {
-                    console.log('There was a problem with the request.');
-                }
-                console.log(xhr.responseText);
+function request(url) {
+    console.log('Sending request to ' + url);
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status !== 200) {
+                console.log('There was a problem with the request.');
             }
-        };
-        xhr.open('GET', url);
-        xhr.setRequestHeader("Authorization", "Basic " + btoa(document.getElementById('username').value + ":" + document.getElementById('password').value));
-        xhr.send();
-    }
-
+            console.log(xhr.responseText);
+        }
+    };
+    xhr.open('GET', url);
+    xhr.setRequestHeader("Authorization", "Basic " + btoa(document.getElementById('username').value + ":" + document.getElementById('password').value));
+    xhr.send();
+}
 </script>
 </body>
 </html>
