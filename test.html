@@ -81,7 +81,8 @@
             showTab('main');
         }, function(msg) {
             //Failed connection
-            //Display a failure message somewhere on the login page?
+            //TODO: Display a failure message somewhere on the login page?
+            //TODO: differentiate between "server down", "login rejected", and "other"
             showTab('login');
         });
     }
