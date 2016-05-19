@@ -20,9 +20,9 @@
 
 <div id="login" class="hidden primary">
     <p>Enter your JIRA login credentials below:</p>
-    <label for="username">Username: <input id="username" value="isimmons"></label><br/>
-    <label for="password">Password: <input id="password" type="password"></label><br/>
-    <label for="proxy">Proxy: <input id="proxy" value="http://localhost:8080/sharpspring.atlassian.net:443"></label><br/>
+    <label for="jiraUsername">Username: <input id="jiraUsername" placeholder="JIRA Username (not your email!)"></label><br/>
+    <label for="jiraPassword">Password: <input id="jiraPassword" type="password" placeholder="JIRA passsword"></label><br/>
+    <label for="jiraUrl">Proxy: <input id="jiraUrl" value="http://localhost:8080/sharpspring.atlassian.net:443"></label><br/>
     <input type="button" id="saveCredentials" value="Submit">
 </div>
 
@@ -30,27 +30,82 @@
     MAIN WINDOW
 </div>
 
-<script>
-'use strict';
-document.getElementById('saveCredentials').onclick = function() {
-    request(document.getElementById('proxy').value + '/rest/api/2/myself');
-};
+<!--TODO: a universal status bar where I can put small notifications-->
 
-function request(url) {
-    console.log('Sending request to ' + url);
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-            if (xhr.status !== 200) {
-                console.log('There was a problem with the request.');
-            }
-            console.log(xhr.responseText);
+<script>
+    'use strict';
+    const byId = function(id) { return document.getElementById(id); };
+    const API_PREFIX = '/rest/api/2';
+
+    function showTab(name) {
+        Array.prototype.forEach.call(document.getElementsByClassName('primary'), function(node) {
+            node.classList.add('hidden');
+        });
+        byId(name).classList.remove('hidden');
+    }
+
+    //Define functions
+    function jiraRequest(path, success, failure) {
+        if (!('jiraUsername' in localStorage && 'jiraPassword' in localStorage && 'jiraUrl' in localStorage)) {
+            failure('JIRA credentials not configured');
+            return;
         }
+
+        let url = localStorage['jiraUrl'] + API_PREFIX + path;
+        let xhr = new XMLHttpRequest();
+
+        console.log('Sending request to ' + url);
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState !== XMLHttpRequest.DONE) {
+                return; //Don't care about intermediate steps, just when the request is done
+            }
+            if (xhr.status >= 200 && xhr.status < 300) {
+                success(xhr.responseText);
+                //TODO: check response type, JSON parse result?
+                //or maybe just always json parse it? does the JIRA api ever return anything else?
+            } else {
+                console.error('HTTP ' + xhr.status + ' returned from ' + url);
+                console.error(xhr.responseText);
+                failure('Failure connecting to ' + url);
+            }
+        };
+        xhr.open('GET', url);
+        xhr.setRequestHeader("Authorization", "Basic " + btoa(localStorage['jiraUsername'] + ":" + localStorage['jiraPassword']));
+        xhr.send();
+    }
+
+    function testCredentials() {
+        jiraRequest('/myself', function() {
+            //Successful connection
+            showTab('main');
+        }, function(msg) {
+            //Failed connection
+            //Display a failure message somewhere on the login page?
+            showTab('login');
+        });
+    }
+
+    //Hook up event handlers
+    byId('saveCredentials').onclick = function() {
+        localStorage['jiraUrl'] = byId('jiraUrl').value;
+        localStorage['jiraUsername'] = byId('jiraUsername').value;
+        localStorage['jiraPassword'] = byId('jiraPassword').value;
+        testCredentials();
     };
-    xhr.open('GET', url);
-    xhr.setRequestHeader("Authorization", "Basic " + btoa(document.getElementById('username').value + ":" + document.getElementById('password').value));
-    xhr.send();
-}
+
+    if ('jiraUrl' in localStorage) {
+        byId('jiraUrl').value = localStorage['jiraUrl'];
+    }
+    if ('jiraUsername' in localStorage) {
+        byId('jiraUsername').value = localStorage['jiraUsername'];
+    }
+    if ('jiraPassword' in localStorage) {
+        byId('jiraPassword').value = localStorage['jiraPassword'];
+    }
+
+    //Initial program logic
+    testCredentials();
 </script>
 </body>
 </html>
