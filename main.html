@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Issues</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <style>
+        body {
+            padding-top: 65px;
+            /* TODO: padding-top needs to be responsive since the menu will swing to vertical on smaller screens */
+            padding-bottom: 5px;
+        }
+        .navbar-xs {
+            min-height:28px;
+            height: 28px;
+        }
+        .navbar-xs .navbar-brand {
+            padding: 0 12px;
+            font-size: 12px;
+            line-height: 28px;
+        }
+        #main {
+            background: green;
+        }
+        div.thing {
+            background: beige;
+            width: 100%;
+        }
+    </style>
+</head>
+<body style="height: 100%; background: lavender">
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand">Issues</a>
+        </div>
+        <ul id="nav-tabs" class="nav navbar-nav navbar-right">
+            <li data-tab="0" class="active"><a>Work Log</a></li>
+            <li data-tab="1"><a>Event Log</a></li>
+            <li data-tab="2"><a>Issues</a></li>
+            <li data-tab="3"><a>Diffs</a></li>
+        </ul>
+    </div>
+</nav>
+<div id="main">
+    <div id="worklog" data-container="0" class="thing container">
+        Work Log
+        <ul>
+            <li>Current Selected Item/Select an Item</li>
+            <li>Start/Pause/Discard/Log work</li>
+            <li>Hours today summary (total hours, hours per ticket, timeline? your hours on others, your hours on own, others hours on yours)</li>
+        </ul>
+    </div>
+    <div id="eventlog" data-container="1" class="hide thing container">
+        Event Log
+        <ul>
+            <li>Chronological</li>
+            <li>Work log entries by you, work log entries on your tickets</li>
+            <li>JIRA Comments by you</li>
+            <li>JIRA Comments on your tickets</li>
+            <li>JIRA Comments mentioning you</li>
+            <li>Phab Diffs by you, with you as a reviewer</li>
+            <li>new revisions</li>
+            <li>comments</li>
+            <li>rejections/etc</li>
+            <li>Phab comments mentioning you?</li>
+        </ul>
+    </div>
+    <div id="issues" data-container="2" class="hide thing container">
+        Issues
+        <ul>
+            <li>Current Selected Item/Select an Item</li>
+            <li>Card per item</li>
+            <li>Cards assigned to you, or with hours logged by you</li>
+            <li>Category by state (open/dev, feedback needed, dev review/qa, project mgmt? closed?)</li>
+            <li>Indications on card for:</li>
+            <li>- YOURS vs. OTHERS</li>
+            <li>- This Sprint vs. NOT</li>
+            <li>- Bug vs. Feature (vs. ....)</li>
+        </ul>
+    </div>
+    <div id="diffs" data-container="3" class="hide thing container">
+        Diffs
+        <ul>
+            <li>Current Selected Item/Select an Item</li>
+            <li>Card per item</li>
+            <li>Diffs owned by you Accepted but open (waiting to be integrated)</li>
+            <li>Diffs owned by you with Feedback needed</li>
+            <li>Diffs owned by you awaiting review</li>
+            <li>Diffs with you as a reviewer pending review that you haven't reviewed</li>
+            <li>Diffs with you as a system reviewer pending review that you haven't reviewed</li>
+        </ul>
+    </div>
+</div>
+<nav id="bottom-nav" class="navbar navbar-default navbar-fixed-bottom navbar-xs hide">
+    <p id="bottom-nav-text" class="navbar-brand pull-right navbar-xs"></p>
+</nav>
+<script src="main.js"></script>
+<script src="jira.js"></script>
+<script src="phab.js"></script>
+<script src="scheduler.js"></script>
+</body>
+</html>
