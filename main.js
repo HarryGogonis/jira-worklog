@@ -1,13 +1,13 @@
 'use strict';
 
-const WORK_TAB = 0;
-const EVENT_TAB = 1;
-const ISSUES_TAB = 2;
+const ACTIVE_WORK_TAB = 0;
+const ISSUES_TAB = 1;
+const DAILY_TAB = 2;
 const SETTINGS_TAB = 3;
 
-const NUM_TABS = 4;
+const NUM_TABS = 3; //Exclude SETTINGS_TAB from regular cycle
 
-var selectedTab = WORK_TAB;
+var selectedTab = ISSUES_TAB;
 
 function bottomNavText(val) {
     if (val) {
@@ -34,6 +34,7 @@ function openExternal(url) {
 }
 
 let shortcutsEnabled = true;
+let selectedCard = null;
 
 function keyboardShortcuts(enable) {
     shortcutsEnabled = enable;
@@ -52,17 +53,25 @@ function keyEvent(evt) {
         case 's':
             selectDiv(ISSUES_TAB);
             break;
-        case 'w':
-            selectDiv(WORK_TAB);
+        case 'a':
+            selectDiv(ACTIVE_WORK_TAB);
             break;
-        case 'e':
-            selectDiv(EVENT_TAB);
+        case 'd':
+            selectDiv(DAILY_TAB);
             break;
         case 'ArrowRight':
-            selectDiv((selectedTab + 1) % NUM_TABS);
+            let nextTab = (selectedTab + 1) % NUM_TABS;
+            if (nextTab === ACTIVE_WORK_TAB && selectedCard === null) {
+                nextTab = (nextTab + 1) % NUM_TABS;
+            }
+            selectDiv(nextTab);
             break;
         case 'ArrowLeft':
-            selectDiv((selectedTab + NUM_TABS - 1) % NUM_TABS);
+            let prevTab = (selectedTab + NUM_TABS - 1) % NUM_TABS;
+            if (prevTab === ACTIVE_WORK_TAB && selectedCard === null) {
+                prevTab = (prevTab + NUM_TABS - 1) % NUM_TABS;
+            }
+            selectDiv(prevTab);
             break;
     }
 }
@@ -76,9 +85,11 @@ document.querySelector('#nav-tabs').addEventListener('click', function(evt) {
     evt.stopPropagation();
 }, false);
 
+//TODO: this should be cleared 5 seconds after it has been set, not just on a 5 second interval
 setInterval(function() {bottomNavText();}, 5000);
 
+//Bind all bootstrap tooltip toggles on page
 document.body.onkeydown = keyEvent;
 $(function () {
     $('[data-toggle="tooltip"]').tooltip()
-})
+});

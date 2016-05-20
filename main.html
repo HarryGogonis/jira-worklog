@@ -36,15 +36,15 @@
         </div>
         <ul id="nav-tabs" class="nav navbar-nav navbar-right">
             <!--TODO: splash screen?-->
-            <li data-tab="0" class="active"><a>Active Item</a></li>
-            <li data-tab="1"><a>Daily Summary</a></li>
-            <li data-tab="2"><a>Issues</a></li>
-            <li data-tab="3"><a>Settings</a></li>
+            <li data-tab="0" class="hidden"><a>Active Item</a></li>
+            <li data-tab="1" class="active"><a>Issues</a></li>
+            <li data-tab="2"><a>Daily Summary</a></li>
+            <li data-tab="3"><a><i class="glyphicon glyphicon-wrench"> </i></a></li>
         </ul>
     </div>
 </nav>
 <div id="main">
-    <div id="worklog" data-container="0" class="thing container">
+    <div id="active-item" data-container="0" class="hide thing container">
         Work Log
         <ul>
             <li>Current Selected Item/Select an Item</li>
@@ -52,7 +52,7 @@
             <li>Hours today summary (total hours, hours per ticket, timeline? your hours on others, your hours on own, others hours on yours)</li>
         </ul>
     </div>
-    <div id="eventlog" data-container="1" class="hide thing container">
+    <div id="daily-summary" data-container="1" class="thing container">
         Event Log
         <ul>
             <li>Chronological</li>
