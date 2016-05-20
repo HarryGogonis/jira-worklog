@@ -22,7 +22,6 @@ window.addEventListener('blur', function() {
   lastFocus = Date.now();
 });
 
-
 function scheduleNextFetch() {
   if (dataTimeoutId) { clearTimeout(dataTimeoutId); }
 

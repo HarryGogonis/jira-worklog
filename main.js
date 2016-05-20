@@ -3,7 +3,8 @@
 const WORK_TAB = 0;
 const EVENT_TAB = 1;
 const ISSUES_TAB = 2;
-const DIFFS_TAB = 3;
+const SETTINGS_TAB = 3;
+
 const NUM_TABS = 4;
 
 var selectedTab = WORK_TAB;
@@ -32,12 +33,21 @@ function openExternal(url) {
   window.open(url, 'issues_ext').focus();
 }
 
+let shortcutsEnabled = true;
+
+function keyboardShortcuts(enable) {
+    shortcutsEnabled = enable;
+}
+
 function keyEvent(evt) {
-    //Supress the tab switching if I'm in "search mode"
+    if (!shortcutsEnabled) {
+        return;
+    }
+
     bottomNavText(evt.key);
     switch(evt.key) {
-        case 'd':
-            selectDiv(DIFFS_TAB);
+        case '?':
+            selectDiv(SETTINGS_TAB);
             break;
         case 's':
             selectDiv(ISSUES_TAB);

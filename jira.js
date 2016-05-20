@@ -55,9 +55,6 @@ function parseIssue(data) {
     }
   };
 
-  //TODO: attach inter-issue links
-  //TODO: attach phab links
-
   //TODO: is it worth making this intermediate representation, or should I just generate the UI elements from the response JSON directly?
 
   return issue;
@@ -170,6 +167,51 @@ function fetchJira() {
   //      Might still be nice to have the auto-complete dictionary available? (Not that I've currently got a good UI for displaying it)
 
   xhr.send();
+}
+
+const API_PREFIX = '/rest/api/2';
+
+//Define functions
+function jiraRequest(path, success, failure) {
+  if (!('jiraUsername' in localStorage && 'jiraPassword' in localStorage && 'jiraUrl' in localStorage)) {
+    failure('JIRA credentials not configured'); //TODO: pass either server down or invalid credentials type errors to callback
+    return;
+  }
+
+  let url = localStorage['jiraUrl'] + API_PREFIX + path;
+  let xhr = new XMLHttpRequest();
+
+  console.log('Sending request to ' + url);
+
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState !== XMLHttpRequest.DONE) {
+      return; //Don't care about intermediate steps, just when the request is done
+    }
+    if (xhr.status >= 200 && xhr.status < 300) {
+      success(xhr.responseText);
+      //TODO: check response type, JSON parse result?
+      //or maybe just always json parse it? does the JIRA api ever return anything else?
+    } else {
+      console.error('HTTP ' + xhr.status + ' returned from ' + url);
+      console.error(xhr.responseText);
+      failure('Failure connecting to ' + url, xhr.status, xhr.responseText);
+    }
+  };
+  xhr.open('GET', url);
+  xhr.setRequestHeader("Authorization", "Basic " + btoa(localStorage['jiraUsername'] + ":" + localStorage['jiraPassword']));
+  xhr.send();
+}
+
+function testCredentials() {
+  jiraRequest('/myself', function() {
+    //Successful connection
+    showTab('main');
+  }, function(msg) {
+    //Failed connection
+    //TODO: Display a failure message somewhere on the settings page?
+    //TODO: differentiate between "server down", "login rejected", and "other"
+    selectDiv(SETTINGS_TAB);
+  });
 }
 
 //trigger re-draws as necessary

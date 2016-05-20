@@ -35,10 +35,11 @@
             <a class="navbar-brand">Issues</a>
         </div>
         <ul id="nav-tabs" class="nav navbar-nav navbar-right">
+            <!--TODO: splash screen?-->
             <li data-tab="0" class="active"><a>Work Log</a></li>
             <li data-tab="1"><a>Event Log</a></li>
             <li data-tab="2"><a>Issues</a></li>
-            <li data-tab="3"><a>Diffs</a></li>
+            <li data-tab="3"><a>Settings</a></li>
         </ul>
     </div>
 </nav>
@@ -79,17 +80,14 @@
             <li>- Bug vs. Feature (vs. ....)</li>
         </ul>
     </div>
-    <div id="diffs" data-container="3" class="hide thing container">
-        Diffs
-        <ul>
-            <li>Current Selected Item/Select an Item</li>
-            <li>Card per item</li>
-            <li>Diffs owned by you Accepted but open (waiting to be integrated)</li>
-            <li>Diffs owned by you with Feedback needed</li>
-            <li>Diffs owned by you awaiting review</li>
-            <li>Diffs with you as a reviewer pending review that you haven't reviewed</li>
-            <li>Diffs with you as a system reviewer pending review that you haven't reviewed</li>
-        </ul>
+    <div id="config" data-container="3" class="hide thing container">
+        <p>Enter your JIRA login credentials below:</p>
+        <div class="form">
+            <label for="jiraUsername">Username: <input id="jiraUsername" placeholder="JIRA Username (not your email!)"></label><br/>
+            <label for="jiraPassword">Password: <input id="jiraPassword" type="password" placeholder="JIRA passsword"></label><br/>
+            <label for="jiraUrl">Proxy: <input class="input input-large" id="jiraUrl" value="http://localhost:8080/sharpspring.atlassian.net:443"></label><br/>
+            <input type="button" id="saveCredentials" value="Submit">
+        </div>
     </div>
 </div>
 <nav id="bottom-nav" class="navbar navbar-default navbar-fixed-bottom navbar-xs hide">
@@ -97,7 +95,7 @@
 </nav>
 <script src="main.js"></script>
 <script src="jira.js"></script>
-<script src="phab.js"></script>
 <script src="scheduler.js"></script>
+<script src="settings.js"></script>
 </body>
 </html>
