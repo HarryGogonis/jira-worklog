@@ -79,3 +79,6 @@ document.querySelector('#nav-tabs').addEventListener('click', function(evt) {
 setInterval(function() {bottomNavText();}, 5000);
 
 document.body.onkeydown = keyEvent;
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+})

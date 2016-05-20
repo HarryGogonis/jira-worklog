@@ -36,8 +36,8 @@
         </div>
         <ul id="nav-tabs" class="nav navbar-nav navbar-right">
             <!--TODO: splash screen?-->
-            <li data-tab="0" class="active"><a>Work Log</a></li>
-            <li data-tab="1"><a>Event Log</a></li>
+            <li data-tab="0" class="active"><a>Active Item</a></li>
+            <li data-tab="1"><a>Daily Summary</a></li>
             <li data-tab="2"><a>Issues</a></li>
             <li data-tab="3"><a>Settings</a></li>
         </ul>
@@ -82,17 +82,38 @@
     </div>
     <div id="config" data-container="3" class="hide thing container">
         <p>Enter your JIRA login credentials below:</p>
-        <div class="form">
-            <label for="jiraUsername">Username: <input id="jiraUsername" placeholder="JIRA Username (not your email!)"></label><br/>
-            <label for="jiraPassword">Password: <input id="jiraPassword" type="password" placeholder="JIRA passsword"></label><br/>
-            <label for="jiraUrl">Proxy: <input class="input input-large" id="jiraUrl" value="http://localhost:8080/sharpspring.atlassian.net:443"></label><br/>
-            <input type="button" id="saveCredentials" value="Submit">
+        <div class="form-group">
+            <label for="jiraUsername">Username</label>
+            <input id="jiraUsername" class="form-control" placeholder="isimmons" data-toggle="tooltip" data-placement="top" title="Not your email!">
         </div>
+        <div class="form-group">
+            <label for="jiraPassword">Password</label>
+            <input id="jiraPassword" class="form-control" type="password" placeholder="JIRA passsword">
+        </div>
+        <div class="form-group">
+            <label for="jiraUrl">Proxy</label>
+            <input class="form-control input-large" id="jiraUrl" value="http://localhost:8080/sharpspring.atlassian.net:443">
+        </div>
+        <input type="submit" class="btn btn-primary" id="saveCredentials" value="Submit">
+        <ul>
+            <li>TODO: enter submits</li>
+            <li>TODO: disable submit unless there is content in all fields</li>
+            <li>TODO: warning class on empty fields</li>
+            <li>TODO: error class on fields when a request comes back with failure messages</li>
+        </ul>
     </div>
 </div>
 <nav id="bottom-nav" class="navbar navbar-default navbar-fixed-bottom navbar-xs hide">
     <p id="bottom-nav-text" class="navbar-brand pull-right navbar-xs"></p>
 </nav>
+<script src="https://code.jquery.com/jquery-2.2.3.min.js"
+        integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="
+        crossorigin="anonymous">
+</script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+        integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+        crossorigin="anonymous">
+</script>
 <script src="main.js"></script>
 <script src="jira.js"></script>
 <script src="scheduler.js"></script>
