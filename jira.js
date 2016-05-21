@@ -206,7 +206,8 @@ function testCredentials() {
   jiraRequest('/myself', function() {
     //Successful connection
     showTab('main');
-    $('#clearCredentials').prop('disabled', true);
+    //TODO: set the "lastJira" values here
+    checkJiraInputs();
   }, function(msg) {
     //Failed connection
     //TODO: Display a failure message somewhere on the settings page?

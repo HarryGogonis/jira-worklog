@@ -12,8 +12,6 @@ $('#clearCredentials').on('click', function() {
   $('#jiraUrl').val(localStorage['jiraUrl']);
   $('#jiraUsername').val(localStorage['jiraUsername']);
   $('#jiraPassword').val(localStorage['jiraPassword']);
-  $('#clearCredentials').prop('disabled', true);
-  $('#saveCredentials').prop('disabled', true);
   checkJiraInputs();
 });
 
@@ -21,18 +19,19 @@ $('#clearCredentials').on('click', function() {
 //      any/all inputs, not just specificallythe ones on the config page?
 $('.jira-input').on('focus', function() { keyboardShortcuts(false); });
 $('.jira-input').on('blur', function() { keyboardShortcuts(true); });
-if ('jiraUrl' in localStorage) {
-    document.getElementById('jiraUrl').value = localStorage['jiraUrl'];
-}
-if ('jiraUsername' in localStorage) {
-    document.getElementById('jiraUsername').value = localStorage['jiraUsername'];
-}
-if ('jiraPassword' in localStorage) {
-    document.getElementById('jiraPassword').value = localStorage['jiraPassword'];
-}
+
+var lastJira = {
+  'jiraUrl': localStorage['jiraUrl'] || '',
+  'jiraUsername': localStorage['jiraUsername'] || '',
+  'jiraPassword': localStorage['jiraPassword'] || ''
+};
+$('#jiraUsername').val(lastJira['jiraUsername']);
+$('#jiraPassword').val(lastJira['jiraPassword']);
+$('#jiraUrl').val(lastJira['jiraUrl']);
 
 function checkJiraInputs() {
   var anyEmpty = false;
+  var anyDifferent = false;
   $('.jira-input').each(function(idx, element) {
     if (!element.value) {
       anyEmpty = true;
@@ -40,21 +39,21 @@ function checkJiraInputs() {
     } else {
       $(element).closest('.form-group').removeClass('has-warning');
     }
+    if (element.value !== lastJira[element.id]) {
+      anyDifferent = true;
+    }
   });
-
-  $('#saveCredentials').prop('disabled', anyEmpty);
+  $('#saveCredentials').prop('disabled', anyEmpty || !anyDifferent);
+  $('#clearCredentials').prop('disabled', !anyDifferent);
 }
 
 checkJiraInputs();
 
-$('.jira-input').on('keyup', function() {
-  //TODO: arrow keys and the like shouldn't trigger this, only things that
-  //      actually change the values
-  console.log('yup');
-  checkJiraInputs();
-  $('#clearCredentials').prop('disabled', false);
-});
-//listen for enter keypresses, submit the form IF this is the active tab
+//TODO: arrow keys and the like shouldn't trigger this, only things that
+//      actually change the values
+$('.jira-input').on('keyup', checkJiraInputs);
+
+//TODO: listen for enter keypresses, submit the form IF this is the active tab
 
 //Initial program logic
 //TODO: maybe move this into main or scheduler
