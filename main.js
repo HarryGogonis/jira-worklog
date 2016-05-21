@@ -75,15 +75,10 @@ function keyEvent(evt) {
             break;
     }
 }
-
-document.querySelector('#nav-tabs').addEventListener('click', function(evt) {
-    if (evt.target !== evt.currentTarget) {
-        var li = evt.target.parentNode;
-        var thang = li.attributes.getNamedItem('data-tab').value;
-        selectDiv(parseInt(thang, 10));
-    }
-    evt.stopPropagation();
-}, false);
+$('#nav-tabs').on('click', function(evt) {
+  let tab = $(evt.target).closest('[data-tab]').attr('data-tab');
+  selectDiv(tab);
+});
 
 //TODO: this should be cleared 5 seconds after it has been set, not just on a 5 second interval
 setInterval(function() {bottomNavText();}, 5000);
