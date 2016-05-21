@@ -82,14 +82,10 @@ function fetchJira() {
         + lastJiraUpdate.getDate() + ' ' + hours + ':' + minutes;
     jql = '(' + jql + ') AND updated >= \'' + lastDateFormatted + '\'';
   }
-
-  var xhr = new XMLHttpRequest();
-
+  //TODO: jiraRequest needs to take a 'GET' vs. 'POST' method argument
   //TODO: needs an expand=, maybe also fields=
-  xhr.open('GET', '/jira/search?maxResults=500&jql=' + jql, true);
-
-  xhr.onload = function(evt) {
-    const issues = JSON.parse(xhr.response);
+  jiraRequest('/search?maxResults=500&jql=' + jql, function(body) {
+    const issues = JSON.parse(body);
     lastJiraUpdate = now;
     console.log('got: ');
     console.log(issues);
@@ -113,7 +109,9 @@ function fetchJira() {
       console.log(parsed);
     }
     //TODO: fetch full worklogs? Maybe just as many as I can in-line on the normal requests? (how about comments?)
-  };
+  }, function() {
+    console.log('bad request');
+  });
 
   function render(issue) {
     var div = document.createElement('div');
@@ -153,20 +151,13 @@ function fetchJira() {
 
   }
 
-  //TODO: those "stale" categories from Brian's notification emails? (sitting in QA forever?)
   //TODO: make them "selectable" by current search
-  //TODO: ability to throw one (or multiple?) cards over to the work log tab for "working on this now"
-
-  xhr.onerror = function(evt) {
-    console.error('Error fetching from jira'); //TODO: more descriptive errors
-  };
+  //TODO: ability to throw one cards over to the work log tab for "working on this now"
 
   //TODO: another query for surface-level info only on many more issues? So that I can auto-complete searches
   //      and have placeholder cards (status/key/assignee only)?? Not sure if its worthwhile
   //      Maybe just have a way to fetch on-demand other card details (or maybe just pop open the external tab for them)
   //      Might still be nice to have the auto-complete dictionary available? (Not that I've currently got a good UI for displaying it)
-
-  xhr.send();
 }
 
 const API_PREFIX = '/rest/api/2';
@@ -205,9 +196,10 @@ function jiraRequest(path, success, failure) {
 function testCredentials() {
   jiraRequest('/myself', function() {
     //Successful connection
-    showTab('main');
+    selectDiv(ISSUES_TAB);
     //TODO: set the "lastJira" values here
     checkJiraInputs();
+    scheduleNextFetch();
   }, function(msg) {
     //Failed connection
     //TODO: Display a failure message somewhere on the settings page?
