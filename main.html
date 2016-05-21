@@ -31,15 +31,12 @@
 <body style="height: 100%; background: lavender">
 <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
-        <div class="navbar-header">
-            <a class="navbar-brand">Issues</a>
-        </div>
         <ul id="nav-tabs" class="nav navbar-nav navbar-right">
             <!--TODO: splash screen?-->
             <li data-tab="0" class="hidden"><a>Active Item</a></li>
-            <li data-tab="1" class="active"><a>Issues</a></li>
-            <li data-tab="2"><a>Daily Summary</a></li>
-            <li data-tab="3"><a><i class="glyphicon glyphicon-wrench"></i></a></li>
+            <li data-tab="1" class="active"><a><i class="glyphicon glyphicon-search"></i> <u>S</u>earch Issues</a></li>
+            <li data-tab="2"><a><i class="glyphicon glyphicon-tasks"></i> <u>D</u>aily Summary</a></li>
+            <li data-tab="3"><a><i class="glyphicon glyphicon-cog"></i></a></li>
         </ul>
     </div>
 </nav>
@@ -84,17 +81,18 @@
         <p>Enter your JIRA login credentials below:</p>
         <div class="form-group">
             <label for="jiraUsername">Username</label>
-            <input id="jiraUsername" class="form-control" placeholder="isimmons" data-toggle="tooltip" data-placement="top" title="Not your email!">
+            <input id="jiraUsername" class="form-control jira-input" placeholder="isimmons" data-toggle="tooltip" data-placement="top" title="Not your email!">
         </div>
         <div class="form-group">
             <label for="jiraPassword">Password</label>
-            <input id="jiraPassword" class="form-control" type="password" placeholder="JIRA passsword">
+            <input id="jiraPassword" class="form-control jira-input" type="password" placeholder="JIRA passsword">
         </div>
         <div class="form-group">
             <label for="jiraUrl">Proxy</label>
-            <input class="form-control input-large" id="jiraUrl" value="http://localhost:8080/sharpspring.atlassian.net:443">
+            <input class="form-control jira-input input-large" id="jiraUrl" value="http://localhost:8080/sharpspring.atlassian.net:443">
         </div>
         <input type="submit" class="btn btn-primary" id="saveCredentials" value="Submit">
+        <input type="submit" class="btn btn-link" id="clearCredentials" value="Cancel" disabled="disabled">
         <ul>
             <li>TODO: enter submits</li>
             <li>TODO: disable submit unless there is content in all fields</li>
