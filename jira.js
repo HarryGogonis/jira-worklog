@@ -1,7 +1,5 @@
 'use strict';
 
-//keep stuff in localstorage? (or maybe don't? just have the page elements and in-memory stuff instead?)
-
 var issues = {};
 var lastJiraUpdate = null;
 
@@ -10,6 +8,13 @@ var lastJiraUpdate = null;
 const jiraIssues = {};
 
 //TODO: make this a class with a constructor?
+function buildCard(data) {
+  const $a = $(`<a class="tile" data-issue-id="${data['key']}"></a>`);
+  const $bottomPanel = $(`<div class="bottom-panel"><div class="title">${data['key']}</div><div class="title sub">${data['fields']['summary']}</div></div>`);
+  $a.append($bottomPanel);
+  return $a;
+}
+
 function parseIssue(data) {
   var issue = {
     key: data['key'],
@@ -22,12 +27,6 @@ function parseIssue(data) {
     },
     //creator: data['fields']['creator']['displayName'],
     //TODO: avatar URLs?
-    reporter: {
-      display: data['fields']['reporter']['displayName'],
-      name: data['fields']['reporter']['name'],
-      key: data['fields']['reporter']['key'],
-      avatar: data['fields']['reporter']['avatarUrls']['48x48']
-    },
     description: data['fields']['description'],
     summary: data['fields']['summary'],
     aggregateTime: {
@@ -91,22 +90,19 @@ function fetchJira() {
     console.log(issues);
 
     if (!incremental) {
-      for (var id in jiraIssues) {
-        if (Object.prototype.hasOwnProperty.call(jiraIssues, id)) {
-          delete jiraIssues[id];
-        }
-      }
+      $('[data-issue-id]').remove();
     }
 
     for (var issue of issues['issues']) {
-      const parsed = parseIssue(issue);
-      if (parsed.key in jiraIssues) {
-        //Clear out the old one if necessary
+      const issueElement = buildCard(issue);
+      const $existing = $('[data-issue-id=' + issue['key'] + ']');
+      if ($existing.length) {
+        $existing.replaceWith(issueElement);
+      } else {
+        $('#first-filler').before(issueElement);
       }
-      jiraIssues[parsed.key] = parsed;
-      console.log('----------------');
-      console.log(issue);
-      console.log(parsed);
+      //TODO: maybe I don't need to keep the "parsed" objects at all, perhaps the elements themselves contain everything I need
+      //TODO: but I'll probably need some kind of worklog/activity object
     }
     //TODO: fetch full worklogs? Maybe just as many as I can in-line on the normal requests? (how about comments?)
   }, function() {
