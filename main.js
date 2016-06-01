@@ -10,23 +10,24 @@ const NUM_TABS = 3; //Exclude SETTINGS_TAB from regular cycle
 var selectedTab = ISSUES_TAB;
 
 function bottomNavText(val) {
-    if (val) {
-        document.body.style.paddingBottom = '33px';
-        document.querySelector('#bottom-nav').classList.remove('hide');
-    } else {
-        document.querySelector('#bottom-nav').classList.add('hide');
-        document.body.style.paddingBottom = '5px';
-    }
-    document.querySelector('#bottom-nav-text').innerHTML = val;
+  if (val) {
+    document.body.style.paddingBottom = '33px';
+    document.querySelector('#bottom-nav').classList.remove('hide');
+    console.log(val);
+  } else {
+    document.querySelector('#bottom-nav').classList.add('hide');
+    document.body.style.paddingBottom = '5px';
+  }
+  document.querySelector('#bottom-nav-text').innerHTML = val;
 }
 
 function selectDiv(id) {
-    if (selectedTab === id) { return; }
-    document.querySelector(`[data-container="${selectedTab}"]`).classList.add('hide');
-    document.querySelector(`li[data-tab="${selectedTab}"]`).classList.remove('active');
-    selectedTab = id;
-    document.querySelector(`[data-container="${selectedTab}"]`).classList.remove('hide');
-    document.querySelector(`li[data-tab="${selectedTab}"]`).classList.add('active');
+  if (selectedTab === id) { return; }
+  document.querySelector(`[data-container="${selectedTab}"]`).classList.add('hide');
+  document.querySelector(`li[data-tab="${selectedTab}"]`).classList.remove('active');
+  selectedTab = id;
+  document.querySelector(`[data-container="${selectedTab}"]`).classList.remove('hide');
+  document.querySelector(`li[data-tab="${selectedTab}"]`).classList.add('active');
 }
 
 function openExternal(url) {
@@ -37,43 +38,43 @@ let shortcutsEnabled = true;
 let selectedCard = null;
 
 function keyboardShortcuts(enable) {
-    shortcutsEnabled = enable;
+  shortcutsEnabled = enable;
 }
 
 function keyEvent(evt) {
-    if (!shortcutsEnabled) {
-        return;
-    }
+  if (!shortcutsEnabled) {
+      return;
+  }
 
-    bottomNavText(evt.key);
-    switch(evt.key) {
-        case '?':
-            selectDiv(SETTINGS_TAB);
-            break;
-        case 's':
-            selectDiv(ISSUES_TAB);
-            break;
-        case 'a':
-            selectDiv(ACTIVE_WORK_TAB);
-            break;
-        case 'd':
-            selectDiv(DAILY_TAB);
-            break;
-        case 'ArrowRight':
-            let nextTab = (selectedTab + 1) % NUM_TABS;
-            if (nextTab === ACTIVE_WORK_TAB && selectedCard === null) {
-                nextTab = (nextTab + 1) % NUM_TABS;
-            }
-            selectDiv(nextTab);
-            break;
-        case 'ArrowLeft':
-            let prevTab = (selectedTab + NUM_TABS - 1) % NUM_TABS;
-            if (prevTab === ACTIVE_WORK_TAB && selectedCard === null) {
-                prevTab = (prevTab + NUM_TABS - 1) % NUM_TABS;
-            }
-            selectDiv(prevTab);
-            break;
-    }
+  bottomNavText(evt.key);
+  switch(evt.key) {
+    case '?':
+      selectDiv(SETTINGS_TAB);
+      break;
+    case 's':
+      selectDiv(ISSUES_TAB);
+      break;
+    case 'a':
+      selectDiv(ACTIVE_WORK_TAB);
+      break;
+    case 'd':
+      selectDiv(DAILY_TAB);
+      break;
+    case 'ArrowRight':
+      let nextTab = (selectedTab + 1) % NUM_TABS;
+      if (nextTab === ACTIVE_WORK_TAB && selectedCard === null) {
+        nextTab = (nextTab + 1) % NUM_TABS;
+      }
+      selectDiv(nextTab);
+      break;
+    case 'ArrowLeft':
+      let prevTab = (selectedTab + NUM_TABS - 1) % NUM_TABS;
+      if (prevTab === ACTIVE_WORK_TAB && selectedCard === null) {
+        prevTab = (prevTab + NUM_TABS - 1) % NUM_TABS;
+      }
+      selectDiv(prevTab);
+      break;
+  }
 }
 $('#nav-tabs').on('click', function(evt) {
   let tab = $(evt.target).closest('[data-tab]').attr('data-tab');
@@ -86,5 +87,5 @@ setInterval(function() {bottomNavText();}, 5000);
 //Bind all bootstrap tooltip toggles on page
 document.body.onkeydown = keyEvent;
 $(function () {
-    $('[data-toggle="tooltip"]').tooltip()
+  $('[data-toggle="tooltip"]').tooltip()
 });

@@ -11,16 +11,17 @@ var lastFocus = Date.now();
 var focused = false;
 var dataTimeoutId = null;
 
-//TODO: some visual indication of whether or not the window has focus (tweak to the navbar style maybe?)
-window.addEventListener('focus', function() {
-  focused = true;
-  scheduleNextFetch();
-});
+function attachFocusListeners() {
+  window.addEventListener('focus', function() {
+    focused = true;
+    scheduleNextFetch();
+  });
 
-window.addEventListener('blur', function() {
-  focused = false;
-  lastFocus = Date.now();
-});
+  window.addEventListener('blur', function() {
+    focused = false;
+    lastFocus = Date.now();
+  });
+}
 
 function scheduleNextFetch() {
   if (dataTimeoutId) { clearTimeout(dataTimeoutId); }
@@ -45,7 +46,7 @@ function fetchData() {
   var now = new Date();
   console.log('Fetching data @ ' + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds());
 
-  fetchJira();
+  fetchJiraIssues();
 
   scheduleNextFetch();
 }

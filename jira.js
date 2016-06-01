@@ -59,7 +59,7 @@ function parseIssue(data) {
   return issue;
 }
 
-function fetchJira() {
+function fetchJiraIssues() {
   var jql = '(sprint in openSprints() OR status changed AFTER startOfDay(-1w) OR worklogDate >= startOfDay(-1w))'
       + ' AND (assignee = currentUser() OR worklogAuthor = currentUser())';
 
@@ -105,55 +105,10 @@ function fetchJira() {
       //TODO: but I'll probably need some kind of worklog/activity object
     }
     //TODO: fetch full worklogs? Maybe just as many as I can in-line on the normal requests? (how about comments?)
-  }, function() {
-    console.log('bad request');
+  }, function (msg) {
+    bottomNavText('Failed to load JIRA issues');
+    console.log(msg);
   });
-
-  function render(issue) {
-    var div = document.createElement('div');
-
-  //<div class="js-detailview ghx-issue js-issue ghx-has-avatar js-parent-drag ghx-days-0 ghx-type-10400" data-issue-id="21770" data-issue-key="SRSP-6068">
-  //      <div class="ghx-issue-content">
-  //      <div class="ghx-issue-fields">
-  //      <span class="ghx-type" title="Fastlane">
-  //      <img src="https://sharpspring.atlassian.net/secure/viewavatar?size=xsmall&amp;avatarId=10300&amp;avatarType=issuetype">
-  //      </span>
-  //      <div class="ghx-key">
-  //      <a href="/browse/SRSP-6068" title="SRSP-6068" class="js-key-link">SR…-6068</a>
-  //  </div>
-  //  <div class="ghx-summary" title="500 error for path sharpspring.marketingautomation.services/api/getZoomCompanyContacts">
-  //      <span class="ghx-inner">500 error for path sharpspring.marketingautomation.services/api/getZoomCompanyContacts</span>
-  //  </div>
-  //  </div>
-  //  <div class="ghx-extra-fields">
-  //      <div class="ghx-extra-field-row"><span original-title="" class="ghx-extra-field " data-tooltip="Original Estimate: 1h">
-  //      <span class="ghx-extra-field-content">1h</span>
-  //  </span></div>
-  //  <div class="ghx-extra-field-row"><span original-title="" class="ghx-extra-field " data-tooltip="Priority: Critical">
-  //      <span class="ghx-extra-field-content">Critical</span></span>
-  //      </div>
-  //      <div class="ghx-extra-field-row"><span original-title="" class="ghx-extra-field " data-tooltip="Category: Bug">
-  //      <span class="ghx-extra-field-content">Bug</span></span>
-  //      </div>
-  //      </div>
-  //      </div>
-  //      <div class="ghx-avatar"><img original-title="" src="https://sharpspring.atlassian.net/secure/useravatar?ownerId=mark.caudill&amp;avatarId=11008" class="ghx-avatar-img" alt="Assignee: Mark Caudill" data-tooltip="Assignee: Mark Caudill"></div>
-  //      <div class="ghx-end"><div class="ghx-corner"><span class="aui-badge" title="Remaining Time Estimate">0.5h</span></div>
-  //  </div>
-  //  <div class="ghx-flags"><span class="ghx-priority" title="Critical"><img src="https://sharpspring.atlassian.net/images/icons/priorities/critical.svg"></span></div>
-  //      <div class="ghx-grabber" style="background-color:#0000ff;"></div>
-  //
-  //      </div>
-
-  }
-
-  //TODO: make them "selectable" by current search
-  //TODO: ability to throw one cards over to the work log tab for "working on this now"
-
-  //TODO: another query for surface-level info only on many more issues? So that I can auto-complete searches
-  //      and have placeholder cards (status/key/assignee only)?? Not sure if its worthwhile
-  //      Maybe just have a way to fetch on-demand other card details (or maybe just pop open the external tab for them)
-  //      Might still be nice to have the auto-complete dictionary available? (Not that I've currently got a good UI for displaying it)
 }
 
 const API_PREFIX = '/rest/api/2';
@@ -167,6 +122,8 @@ function jiraRequest(path, success, failure) {
 
   let url = localStorage['jiraUrl'] + API_PREFIX + path;
   let xhr = new XMLHttpRequest();
+
+  xhr.timeout = 1000 * 6;
 
   console.log('Sending request to ' + url);
 
@@ -184,6 +141,9 @@ function jiraRequest(path, success, failure) {
       failure('Failure connecting to ' + url, xhr.status, xhr.responseText);
     }
   };
+
+  xhr.onerror = failure;
+
   xhr.open('GET', url);
   xhr.setRequestHeader("Authorization", "Basic " + btoa(localStorage['jiraUsername'] + ":" + localStorage['jiraPassword']));
   xhr.send();
@@ -192,14 +152,19 @@ function jiraRequest(path, success, failure) {
 function testCredentials() {
   jiraRequest('/myself', function() {
     //Successful connection
+    bottomNavText('JIRA connection successful');
     selectDiv(ISSUES_TAB);
     //TODO: set the "lastJira" values here
     checkJiraInputs();
+    attachFocusListeners();
     scheduleNextFetch();
   }, function(msg) {
     //Failed connection
+    bottomNavText('JIRA connection failed');
+    console.log(msg);
     //TODO: Display a failure message somewhere on the settings page?
     //TODO: differentiate between "server down", "login rejected", and "other"
+    //TODO: do I need to "checkJiraInputs" here?
     selectDiv(SETTINGS_TAB);
   });
 }
