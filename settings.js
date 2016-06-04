@@ -15,10 +15,8 @@ $('#clearCredentials').on('click', function() {
   checkJiraInputs();
 });
 
-//TODO: maybe move these statements out into main.js and apply them to
-//      any/all inputs, not just specificallythe ones on the config page?
-$('.jira-input').on('focus', function() { keyboardShortcuts(false); });
-$('.jira-input').on('blur', function() { keyboardShortcuts(true); });
+//TODO: arrow keys and the like shouldn't trigger this, only things that actually change the values
+$('.jira-input').on('keyup', checkJiraInputs);
 
 var lastJira = {
   'jiraUrl': localStorage['jiraUrl'] || '',
@@ -48,10 +46,6 @@ function checkJiraInputs() {
 }
 
 checkJiraInputs();
-
-//TODO: arrow keys and the like shouldn't trigger this, only things that
-//      actually change the values
-$('.jira-input').on('keyup', checkJiraInputs);
 
 //TODO: listen for enter keypresses, submit the form IF this is the active tab
 

@@ -37,9 +37,8 @@ function openExternal(url) {
 let shortcutsEnabled = true;
 let selectedCard = null;
 
-function keyboardShortcuts(enable) {
-  shortcutsEnabled = enable;
-}
+//Turn off global shortcuts while input fields are focused
+$('input').on('focus', () => shortcutsEnabled = false).on('blur', () => shortcutsEnabled = true);
 
 function keyEvent(evt) {
   if (!shortcutsEnabled) {

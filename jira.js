@@ -108,8 +108,6 @@ function fetchJiraIssues() {
 
   const fields = 'timespent,timeestimate,assignee,summary,issuetype,priority,status,customfield_10006';
 
-  "com.atlassian.greenhopper.service.sprint.Sprint@494919[id=162,rapidViewId=2,state=ACTIVE,name=SRSP-Sprint 70,startDate=2016-06-03T23:19:50.504-04:00,endDate=2016-06-17T17:00:00.000-04:00,completeDate=<null>,sequence=162]"
-
   // /rest/api/2/worklog/updated && /rest/api/2/worklog/list && /rest/api/2/worklog/deleted
   // (doesn't look like I can filter to just my own though, bleh JIRA)
 
@@ -134,7 +132,6 @@ function fetchJiraIssues() {
       //TODO: maybe I don't need to keep the "parsed" objects at all, perhaps the elements themselves contain everything I need
       //TODO: but I'll probably need some kind of worklog/activity object
     }
-    //TODO: fetch full worklogs? Maybe just as many as I can in-line on the normal requests? (how about comments?)
   }, function (msg) {
     bottomNavText('Failed to load JIRA issues');
     console.log(msg);
