@@ -182,26 +182,24 @@ body {
         </ul>
     </div>
     <div id="config" data-container="3" class="hide thing container">
-        <p>Enter your JIRA login credentials below:</p>
-        <div class="form-group">
-            <label for="jiraUsername">Username</label>
-            <input id="jiraUsername" class="form-control jira-input" placeholder="isimmons" data-toggle="tooltip" data-placement="top" title="Not your email!">
-        </div>
-        <div class="form-group">
-            <label for="jiraPassword">Password</label>
-            <input id="jiraPassword" class="form-control jira-input" type="password" placeholder="JIRA passsword">
-        </div>
-        <div class="form-group">
-            <label for="jiraUrl">Proxy</label>
-            <input class="form-control jira-input input-large" id="jiraUrl" value="http://localhost:8080/sharpspring.atlassian.net:443">
-        </div>
-        <input type="submit" class="btn btn-primary" id="saveCredentials" value="Submit">
-        <input type="submit" class="btn btn-link" id="clearCredentials" value="Cancel" disabled="disabled">
-        <p id="settings-message"></p>
-        <ul>
-            <li>TODO: enter submits</li>
-            <li>TODO: error class on fields when a request comes back with failure messages</li>
-        </ul>
+        <form id="config-form">
+            <p>Enter your JIRA login credentials below:</p>
+            <div class="form-group">
+                <label for="jiraUsername">Username</label>
+                <input id="jiraUsername" class="form-control jira-input" placeholder="isimmons" data-toggle="tooltip" data-placement="top" title="Not your email!">
+            </div>
+            <div class="form-group">
+                <label for="jiraPassword">Password</label>
+                <input id="jiraPassword" class="form-control jira-input" type="password" placeholder="JIRA passsword">
+            </div>
+            <div class="form-group">
+                <label for="jiraUrl">Proxy</label>
+                <input class="form-control jira-input input-large" id="jiraUrl" value="http://localhost:8080/sharpspring.atlassian.net:443">
+            </div>
+            <input type="submit" class="btn btn-primary" id="saveCredentials" value="Submit">
+            <input type="submit" class="btn btn-link" id="clearCredentials" value="Cancel" disabled="disabled">
+            <p id="settings-message"></p>
+        </form>
     </div>
 </div>
 <nav id="bottom-nav" class="navbar navbar-default navbar-fixed-bottom navbar-xs hide">
