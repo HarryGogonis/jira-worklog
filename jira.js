@@ -10,7 +10,7 @@ function buildCard(data) {
     $a.append($(`<i class="glyphicon glyphicon-user" title="Assigned to other"></i>`));
   }
 
-  if (data.fields.customfield_10006.every(sprint => sprint.indexOf("state=ACTIVE") === -1)){
+  if (!data.fields.customfield_10006 || data.fields.customfield_10006.every(sprint => sprint.indexOf("state=ACTIVE") === -1)){
     $a.append($(`<i class="glyphicon glyphicon-log-out" title="Not on current sprint"></i>`));
   }
 
@@ -177,22 +177,28 @@ function jiraRequest(path, success, failure) {
 }
 
 function testCredentials() {
+  const $settingsMessage = $('#settings-message');
+  const $settingsControls = $('#saveCredentials, #clearCredentials');
+  $settingsControls.prop('disabled', true);
+  $settingsMessage.html('Testing JIRA Connection...');
   jiraRequest('/myself', function() {
     //Successful connection
+    $settingsControls.prop('disabled', false);
     bottomNavText('JIRA connection successful');
-    selectDiv(ISSUES_TAB);
-    //TODO: set the "lastJira" values here
-    //TODO: also grab the current sprint? (or maybe grab that *instead* as my test?)
-    checkJiraInputs();
+    $settingsMessage.html('JIRA connection successful');
+
+    //These next two should be part of a "initialize scheduler" call
     attachFocusListeners();
     scheduleNextFetch();
   }, function(msg) {
     //Failed connection
+    $settingsControls.prop('disabled', false);
     bottomNavText('JIRA connection failed');
+    $settingsMessage.html('JIRA connection failed'); //TODO: toggle warn/info/etc classes as well?
+    //TODO: also set a warning icon overlay on the settings menu item in the menubar?
     console.log(msg);
     //TODO: Display a failure message somewhere on the settings page?
     //TODO: differentiate between "server down", "login rejected", and "other"
-    //TODO: do I need to "checkJiraInputs" here?
     selectDiv(SETTINGS_TAB);
   });
 }

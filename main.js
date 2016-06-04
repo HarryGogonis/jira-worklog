@@ -40,6 +40,7 @@ let selectedCard = null;
 //Turn off global shortcuts while input fields are focused
 $('input').on('focus', () => shortcutsEnabled = false).on('blur', () => shortcutsEnabled = true);
 
+//TODO: delegate any events I don't specifically want to a per-tab handler function
 function keyEvent(evt) {
   if (!shortcutsEnabled) {
       return;

@@ -2,50 +2,28 @@
 
 //Hook up event handlers
 $('#saveCredentials').on('click', function() {
-    localStorage['jiraUrl'] = document.getElementById('jiraUrl').value;
-    localStorage['jiraUsername'] = document.getElementById('jiraUsername').value;
-    localStorage['jiraPassword'] = document.getElementById('jiraPassword').value;
-    testCredentials();
+  localStorage['jiraUsername'] = document.getElementById('jiraUsername').value;
+  localStorage['jiraPassword'] = document.getElementById('jiraPassword').value;
+  localStorage['jiraUrl'] = document.getElementById('jiraUrl').value;
+  testCredentials();
 });
 
 $('#clearCredentials').on('click', function() {
-  $('#jiraUrl').val(localStorage['jiraUrl']);
   $('#jiraUsername').val(localStorage['jiraUsername']);
   $('#jiraPassword').val(localStorage['jiraPassword']);
-  checkJiraInputs();
+  $('#jiraUrl').val(localStorage['jiraUrl']);
 });
 
-//TODO: arrow keys and the like shouldn't trigger this, only things that actually change the values
-$('.jira-input').on('keyup', checkJiraInputs);
-
-var lastJira = {
-  'jiraUrl': localStorage['jiraUrl'] || '',
-  'jiraUsername': localStorage['jiraUsername'] || '',
-  'jiraPassword': localStorage['jiraPassword'] || ''
-};
-$('#jiraUsername').val(lastJira['jiraUsername']);
-$('#jiraPassword').val(lastJira['jiraPassword']);
-$('#jiraUrl').val(lastJira['jiraUrl']);
-
-function checkJiraInputs() {
-  var anyEmpty = false;
-  var anyDifferent = false;
-  $('.jira-input').each(function(idx, element) {
-    if (!element.value) {
-      anyEmpty = true;
-      $(element).closest('.form-group').addClass('has-warning');
-    } else {
-      $(element).closest('.form-group').removeClass('has-warning');
-    }
-    if (element.value !== lastJira[element.id]) {
-      anyDifferent = true;
-    }
-  });
-  $('#saveCredentials').prop('disabled', anyEmpty || !anyDifferent);
-  $('#clearCredentials').prop('disabled', !anyDifferent);
+//Load the initial values in from local storage
+if (localStorage.jiraUsername) {
+  $('#jiraUsername').val(localStorage.jiraUsername);
 }
-
-checkJiraInputs();
+if (localStorage.jiraPassword) {
+  $('#jiraPassword').val(localStorage.jiraPassword);
+}
+if (localStorage.jiraUrl) {
+  $('#jiraUrl').val(localStorage.jiraUrl);
+}
 
 //TODO: listen for enter keypresses, submit the form IF this is the active tab
 
