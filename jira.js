@@ -3,15 +3,39 @@
 var issues = {};
 var lastJiraUpdate = null;
 
-//https://developer.mozilla.org/en-US/docs/Web/API/notification
-
-const jiraIssues = {};
-
-//TODO: make this a class with a constructor?
 function buildCard(data) {
-  const $a = $(`<a class="tile" data-issue-id="${data['key']}"></a>`);
-  const $bottomPanel = $(`<div class="bottom-panel"><div class="title">${data['key']}</div><div class="title sub">${data['fields']['summary']}</div></div>`);
-  $a.append($bottomPanel);
+  const $a = $(`<a class="tile" data-issue-id="${data.key}"></a>`);
+
+  if (data.fields.assignee.name !== localStorage.jiraUsername) {
+    $a.append($(`<i class="glyphicon glyphicon-user" title="Assigned to other"></i>`));
+  }
+
+  if (data.fields.customfield_10006.every(sprint => sprint.indexOf("state=ACTIVE") === -1)){
+    $a.append($(`<i class="glyphicon glyphicon-log-out" title="Not on current sprint"></i>`));
+  }
+
+  $a.append($(`<img width="16 px" height="16 px" alt="${data.fields.issuetype.name}" src="${data.fields.issuetype.iconUrl}">`));
+
+  //FIXME: bleh, these icons don't use transparencies and only look good against a white background
+  $a.append($(`<img width="16 px" height="16 px" alt="${data.fields.priority.name}" src="${data.fields.priority.iconUrl}\">`));
+
+  //https://sharpspring.atlassian.net/browse/SRSP-123 external URL? (open in new tab?)
+
+  //TODO: bake in the SS bug severity stuff instead of the priority field?
+
+  //data.fields.timespent;
+  //data.fields.timeoriginalestimate;
+  //data.fields.timeestimate;
+
+  $a.append($(`<div>${data.fields.status.name}</div>`)); //TODO: "badge" styling?
+  $a.append($(`<div>${data.key}</div>`));
+
+  //TODO: a progress bar
+  const percentDone = data.fields.timespent / (data.fields.timespent + data.fields.timeestimate) * 100;
+  $a.append($(`<div>${Math.round(percentDone)}% done</div>`));
+
+  //FIXME: field summary isn't HTML escaped
+  $a.append($(`<div>${data.fields.summary.replace(/^(\[[^\]]*]| *)+/, '')}</div>`));
   return $a;
 }
 
@@ -29,11 +53,6 @@ function parseIssue(data) {
     //TODO: avatar URLs?
     description: data['fields']['description'],
     summary: data['fields']['summary'],
-    aggregateTime: {
-      estimate: data['fields']['aggregatetimeestimate'],
-      originalEstimate: data['fields']['aggregatetimeoriginalestimate'],
-      spent: data['fields']['aggregatetimespent']
-    },
     time: {
       estimate: data['fields']['timeestimate'],
       originalEstimate: data['fields']['timeoriginalestimate'],
@@ -60,6 +79,8 @@ function parseIssue(data) {
 }
 
 function fetchJiraIssues() {
+  //TODO: also grab current day worklog entries in parallel with this and populate the other tab as well
+
   var jql = '(sprint in openSprints() OR status changed AFTER startOfDay(-1w) OR worklogDate >= startOfDay(-1w))'
       + ' AND (assignee = currentUser() OR worklogAuthor = currentUser())';
 
@@ -81,9 +102,18 @@ function fetchJiraIssues() {
         + lastJiraUpdate.getDate() + ' ' + hours + ':' + minutes;
     jql = '(' + jql + ') AND updated >= \'' + lastDateFormatted + '\'';
   }
+
+  //operations,versionedRepresentations,editmeta,changelog,renderedFields
   //TODO: jiraRequest needs to take a 'GET' vs. 'POST' method argument
-  //TODO: needs an expand=, maybe also fields=
-  jiraRequest('/search?maxResults=500&jql=' + jql, function(body) {
+
+  const fields = 'timespent,timeestimate,assignee,summary,issuetype,priority,status,customfield_10006';
+
+  "com.atlassian.greenhopper.service.sprint.Sprint@494919[id=162,rapidViewId=2,state=ACTIVE,name=SRSP-Sprint 70,startDate=2016-06-03T23:19:50.504-04:00,endDate=2016-06-17T17:00:00.000-04:00,completeDate=<null>,sequence=162]"
+
+  // /rest/api/2/worklog/updated && /rest/api/2/worklog/list && /rest/api/2/worklog/deleted
+  // (doesn't look like I can filter to just my own though, bleh JIRA)
+
+  jiraRequest(`/search?maxResults=500&fields=${fields}&jql=${jql}`, function(body) {
     const issues = JSON.parse(body);
     lastJiraUpdate = now;
     console.log('got: ');
@@ -155,6 +185,7 @@ function testCredentials() {
     bottomNavText('JIRA connection successful');
     selectDiv(ISSUES_TAB);
     //TODO: set the "lastJira" values here
+    //TODO: also grab the current sprint? (or maybe grab that *instead* as my test?)
     checkJiraInputs();
     attachFocusListeners();
     scheduleNextFetch();
@@ -168,5 +199,3 @@ function testCredentials() {
     selectDiv(SETTINGS_TAB);
   });
 }
-
-//trigger re-draws as necessary
