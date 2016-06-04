@@ -4,7 +4,7 @@ var issues = {};
 var lastJiraUpdate = null;
 
 function buildCard(data) {
-  const $a = $(`<a class="tile" data-issue-id="${data.key}"></a>`);
+  const $a = $(`<div class="tile" data-issue-id="${data.key}"></div>`);
 
   if (data.fields.assignee.name !== localStorage.jiraUsername) {
     $a.append($(`<i class="glyphicon glyphicon-user" title="Assigned to other"></i>`));
