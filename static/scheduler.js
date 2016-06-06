@@ -47,7 +47,6 @@ function fetchData() {
   console.log('Fetching data @ ' + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds());
 
   fetchJiraIssues();
-  fetchJiraWorklog();
 
   scheduleNextFetch();
 }

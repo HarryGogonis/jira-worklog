@@ -5,7 +5,7 @@ var lastIssuesUpdate = null;
 var lastWorklogUpdate = null;
 
 function buildCard(data) {
-  const $div = $(`<div class="tile" data-issue-id="${data.key}"></div>`);
+  const $div = $(`<div class="tile" data-issue-id="${data.id}"></div>`);
 
   if (data.fields.assignee.name !== localStorage.jiraUsername) {
     $div.append($(`<i class="glyphicon glyphicon-user" title="Assigned to other"></i>`));
@@ -28,21 +28,25 @@ function buildCard(data) {
   //data.fields.timeoriginalestimate;
   //data.fields.timeestimate;
 
-  $div.append($(`<div>${data.fields.status.name}</div>`)); //TODO: "badge" styling?
-  $div.append($(`<div>${data.key}</div>`));
+  $div.append($(`<div class="issue-name">${data.fields.status.name}</div>`)); //TODO: "badge" styling?
+  $div.append($(`<div class="issue-key">${data.key}</div>`));
 
   //TODO: a progress bar
   const percentDone = data.fields.timespent / (data.fields.timespent + data.fields.timeestimate) * 100;
   $div.append($(`<div>${Math.round(percentDone)}% done</div>`));
 
-  //FIXME: field summary isn't HTML escaped
-  $div.append($(`<div>${data.fields.summary.replace(/^(\[[^\]]*]| *)+/, '')}</div>`));
+  //FIXME: field summary isn't HTML escaped (just like lots of other fields)
+  $div.append($(`<div class="issue-summary">${data.fields.summary.replace(/^(\[[^\]]*]| *)+/, '')}</div>`));
   return $div;
 }
 
 function buildWorklog(data) {
-  const $li = $(`<li data-worklog-id="${data.key}"></li>`);
-  return $li;
+  //TODO: load these after the issues have been fetched?
+  const $issueKey = $(`[data-issue-id=${data.issueId}] .issue-key`).text() || `Issue #${data.issueId}`;
+  const $issueSummary = $(`[data-issue-id=${data.issueId}] .issue-summary`).text();
+  return $(`<li data-worklog-id="${data.id}" data-worklog-duration="${data.timeSpentSeconds}" data-worklog-start="${data.started}">
+    ${$issueKey} ${$issueSummary} ${data.timeSpent}
+  </li>`);
 }
 
 function fetchJiraIssues() {
@@ -85,7 +89,7 @@ function fetchJiraIssues() {
 
     for (var issue of issues['issues']) {
       const issueElement = buildCard(issue);
-      const $existing = $('[data-issue-id=' + issue['key'] + ']');
+      const $existing = $(`[data-issue-id=${issue.id}]`);
       if ($existing.length) {
         $existing.replaceWith(issueElement);
       } else {
@@ -94,6 +98,7 @@ function fetchJiraIssues() {
       //TODO: maybe I don't need to keep the "parsed" objects at all, perhaps the elements themselves contain everything I need
       //TODO: but I'll probably need some kind of worklog/activity object
     }
+    fetchJiraWorklog();
   }, function (msg) {
     bottomNavText('Failed to load JIRA issues');
     console.log(msg);
@@ -144,19 +149,22 @@ function fetchJiraWorklog() {
       console.log('post returned:');
       const worklogs = JSON.parse(postBody);
       console.log(worklogs);
-      //for (var log of postBody['issues']) {
-      //  const issueElement = buildWorklog(log);
-      //  const $existing = $('[data-worklog-id=' + log['key'] + ']');
-      //  if ($existing.length) {
-      //    $existing.replaceWith(issueElement);
-      //  } else {
-      //    //$('#first-filler').before(issueElement);
-      //  }
-        //TODO: maybe I don't need to keep the "parsed" objects at all, perhaps the elements themselves contain everything I need
-        //TODO: but I'll probably need some kind of worklog/activity object
-      //}
+      for (var worklog of worklogs) {
+        if (worklog.author.key !== localStorage.jiraUsername) {
+          //Skip everything except for my own
+          continue;
+        }
+        const worklogElement = buildWorklog(worklog);
+        const $existing = $(`[data-worklog-id=${worklog.id}]`);
+        if ($existing.length) {
+          $existing.replaceWith(worklogElement);
+        } else {
+          $('#timeline').append(worklogElement);
+        }
+      }
     }, function(postFailure) {
-
+      bottomNavText('Failed to load JIRA worklog details');
+      console.log(postFailure);
     });
   }, function (msg) {
     bottomNavText('Failed to load JIRA worklog');
