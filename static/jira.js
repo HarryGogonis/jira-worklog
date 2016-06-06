@@ -128,23 +128,22 @@ function fetchJiraWorklog() {
   //If incremental is true, then I (a) don't need to wipe out any existing elements and (b) need to run in parallel a "get deleted since" query
 
   jiraRequest(`/worklog/updated?since=${since}`, function(body) {
-    const logs = JSON.parse(body);
-    lastWorklogUpdate = now;
-    console.log('got: ');
-    console.log(logs);
+    const updatedWorklogs = JSON.parse(body);
+    lastWorklogUpdate = now; //TODO: grab the value from the response instead?
 
     if (!incremental) {
       $('[data-worklog-id]').remove();
     }
 
     const worklogIds = [];
-    for (var log of logs.values) {
+    for (var log of updatedWorklogs.values) {
       worklogIds.push(log.worklogId);
     }
 
     jiraPost(`/worklog/list`, {ids: worklogIds}, function(postBody) {
       console.log('post returned:');
-      console.log(postBody);
+      const worklogs = JSON.parse(postBody);
+      console.log(worklogs);
       //for (var log of postBody['issues']) {
       //  const issueElement = buildWorklog(log);
       //  const $existing = $('[data-worklog-id=' + log['key'] + ']');
@@ -237,10 +236,6 @@ function jiraPost(path, body, success, failure) {
   xhr.open('POST', url);
   xhr.setRequestHeader('Authorization', 'Basic ' + btoa(localStorage.jiraUsername + ':' + localStorage.jiraPassword));
   xhr.setRequestHeader('Content-Type', 'application/json; charset=utf8');
-  //xhr.setRequestHeader('Origin', 'https://sharpspring.atlassian.net/');
-  xhr.setRequestHeader('X-Atlassian-Token', 'nocheck');
-
-  console.log('body is ' + JSON.stringify(body));
 
   xhr.send(JSON.stringify(body));
 }
