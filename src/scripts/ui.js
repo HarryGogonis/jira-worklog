@@ -1,3 +1,5 @@
+import { testCredentials } from './jira';
+
 const tabs = {
   ACTIVE_WORK: 0,
   ISSUES: 1,
@@ -32,9 +34,76 @@ const selectDiv = function selectDiv(id) {
   document.querySelector(`li[data-tab="${selectedTab}"]`).classList.add('active');
 };
 
-// TODO do something useful
-const selectCard = function selectCard(id) {
-  selectedCard = id;
+// TODO do something more useful ? or just use for encapsulation
+const selectCard = function selectCard(card) {
+  selectedCard = card;
+};
+
+const buildCard = function buildCard(data) {
+  const $div = $(`<div class="tile" data-issue-id="${data.id}"></div>`);
+
+  if (data.fields.assignee.name !== localStorage.jiraUsername) {
+    $div.append($('<i class="glyphicon glyphicon-user" title="Assigned to other"></i>'));
+  }
+
+  if (!data.fields.customfield_10006
+    || data.fields.customfield_10006.every(sprint => sprint.indexOf('state=ACTIVE') === -1)) {
+    $div.append($('<i class="glyphicon glyphicon-log-out" title="Not on current sprint"></i>'));
+  }
+
+  $div.append($(`<img
+    width="16px" height="16px"
+    alt="${data.fields.issuetype.name}"
+    src="${data.fields.issuetype.iconUrl}"
+  />`));
+
+  $div.append($(`<img
+    width="16px" height="16px"
+    alt="${data.fields.priority.name}"
+    src="${data.fields.priority.iconUrl}"
+  />`));
+
+  /* https://sharpspring.atlassian.net/browse/SRSP-123 external URL? (open in new tab?)
+
+  //TODO: bake in the SS bug severity stuff instead of the priority field?
+
+  //data.fields.timespent;
+  //data.fields.timeoriginalestimate;
+  //data.fields.timeestimate;
+
+  //TODO: "badge" styling? */
+  $div.append($(`<div class="issue-name">${data.fields.status.name}</div>`));
+  $div.append($(`<div class="issue-key">${data.key}</div>`));
+
+  // TODO: a progress bar
+  const percentDone = (data.fields.timespent / (
+    data.fields.timespent + data.fields.timeestimate)) * 100;
+  $div.append($(`<div>${Math.round(percentDone)}% done</div>`));
+
+  // FIXME: field summary isn't HTML escaped (just like lots of other fields)
+  $div.append($(`
+    <div class="issue-summary">
+      ${data.fields.summary.replace(/^(\[[^\]]*]| *)+/, '')}
+    </div>
+  `));
+  return $div;
+};
+
+const buildWorklog = function(data) {
+  // TODO: load these after the issues have been fetched?
+  const $issueKey = $(`[data-issue-id=${data.issueId}] .issue-key`).text() ||
+  `Issue #${data.issueId}`;
+  const $issueSummary = $(`[data-issue-id=${data.issueId}] .issue-summary`).text();
+
+  return $(`
+    <li
+      data-worklog-id="${data.id}"
+      data-worklog-duration="${data.timeSpentSeconds}"
+      data-worklog-start="${data.started}"
+    >
+    ${$issueKey} ${$issueSummary} ${data.timeSpent}
+    </li>
+    `);
 };
 
 // TODO: delegate any events I don't specifically want to a per-tab handler function
@@ -92,6 +161,31 @@ const init = function init() {
   // Bind all bootstrap tooltip toggles on page
   document.body.onkeydown = keyEvent;
   $('[data-toggle="tooltip"]').tooltip();
+
+  $('#config-form').on('submit', (evt) => {
+    evt.preventDefault();
+    localStorage.jiraUsername = $('#jiraUsername').val();
+    localStorage.jiraPassword = $('#jiraPassword').val();
+    localStorage.jiraUrl = $('#jiraUrl').val();
+    testCredentials();
+  });
+
+  $('#clearCredentials').on('click', () => {
+    $('#jiraUsername').val(localStorage.jiraUsername);
+    $('#jiraPassword').val(localStorage.jiraPassword);
+    $('#jiraUrl').val(localStorage.jiraUrl);
+  });
+
+  // Load the initial values in from local storage
+  if (localStorage.jiraUsername) {
+    $('#jiraUsername').val(localStorage.jiraUsername);
+  }
+  if (localStorage.jiraPassword) {
+    $('#jiraPassword').val(localStorage.jiraPassword);
+  }
+  if (localStorage.jiraUrl) {
+    $('#jiraUrl').val(localStorage.jiraUrl);
+  }
 };
 
 export default function ui() {
@@ -100,6 +194,8 @@ export default function ui() {
     selectDiv,
     tabs,
     selectCard,
+    buildCard,
+    buildWorklog,
   };
 }
 
