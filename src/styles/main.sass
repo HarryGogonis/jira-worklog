@@ -1,0 +1,35 @@
+/* ------ color palette ----- 
+ * primary: #3f51b5 indigo
+ * secondary: #7986cb indigo lighten-2
+ * accent: #ffc400 amber accent-3;
+*/
+ body {
+  height: 100%;
+}
+
+.tile-container {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.tile {
+  border: 0.25em solid white;
+  min-width: 16rem;
+  flex: 1 0 auto;
+  height: 20rem;
+  position: relative;
+  background-size: cover;
+  background-color: white;
+  margin: 5px;
+
+  &.filler {
+    height: 0;
+    margin: 0;
+    border: 0;
+  }
+
+  & > div.bottom-panel > div.title {
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}

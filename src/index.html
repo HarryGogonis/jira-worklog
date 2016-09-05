@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Issue Tracker</title>
+  <!-- bower:css -->
+  <!-- endbower -->  
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<body>
+  <nav>
+    <div class="nav-wrapper">
+      <a href="#" class="brand-logo">Worklog</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li data-tab="0" class="hide">
+          <a href="#">Active Item</a>
+        </li>
+        <li data-tab="1" class="active">
+          <a href="#">
+            <i class="material-icons">search</i>
+          </a>
+        </li>
+        <li data-tab="2">
+          <a href="#">
+            <i class="material-icons">list</i>
+          </a>
+        </li>
+        <li data-tab="3">
+          <a href="#">
+            <i class="material-icons">settings</i>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <div id="main">
+    <section id="active-item" data-container="0" class="hide container">
+      Work Log
+      <ul>
+        <li>Current Selected Item/Select an Item</li>
+        <li>Start/Pause/Discard/Log work</li>
+        <li>Hours today summary (total hours, hours per ticket, timeline? your hours on others, your hours on own, others hours on yours)</li>
+      </ul>
+    </section>
+    <section id="issue-search" data-container="1" class="container">
+      <div class="tile-container" id="issue-list">
+        <div id="first-filler" class="tile filler"></div>
+        <div class="tile filler"></div>
+        <div class="tile filler"></div>
+        <div class="tile filler"></div>
+        <div class="tile filler"></div>
+        <div class="tile filler"></div>
+        <div class="tile filler"></div>
+        <div class="tile filler"></div>
+        <div class="tile filler"></div>
+        <div class="tile filler"></div>
+        <div class="tile filler"></div>
+        <div class="tile filler"></div>
+        <div class="tile filler"></div>
+        <div class="tile filler"></div>
+        <div class="tile filler"></div>
+        <div class="tile filler"></div>
+      </div>
+    </section>
+    <section id="daily-summary" data-container="2" class="hide container">
+      Event Log
+      <ul id="timeline"></ul>
+    </section>
+    <section id="config" data-container="3" class="hide container">
+      <form id="config-form">
+        <h3 class="text-center">Enter your JIRA login credentials</h3>
+        <div class="form-group">
+          <label for="jiraUsername">Username (not your email)</label>
+          <input id="jiraUsername" class="jira-input" type="text" placeholder="Username" />
+        </div>
+        <div class="form-group">
+          <label for="jiraPassword">Password</label>
+          <input
+          id="jiraPassword" class="form-control jira-input"
+          type="password" placeholder="JIRA passsword"
+          />
+        </div>
+        <div class="form-group">
+          <label for="jiraUrl">Proxy</label>
+          <input
+          class="form-control jira-input input-large"
+          id="jiraUrl" type="url"
+          value="http://localhost:8080/sharpspring.atlassian.net:443"
+          />
+        </div>
+        <input type="submit" class="btn btn-primary" id="saveCredentials" value="Submit">
+        <input type="submit" class="btn btn-link" id="clearCredentials" value="Cancel" disabled="disabled">
+        <p id="settings-message"></p>
+      </form>
+    </section>
+  </div>
+  <nav id="bottom-nav" class="navbar navbar-default navbar-fixed-bottom navbar-xs hide">
+    <p id="bottom-nav-text" class="navbar-brand pull-right navbar-xs"></p>
+  </nav>
+
+  <!-- bower:js -->
+  <!-- endbower -->
+</body>
+</html>
