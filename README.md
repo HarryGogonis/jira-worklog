@@ -15,6 +15,10 @@ Watch for changes
 Build static files
 `grunt build`
 
+## TODO
 
-
-
+1. Overhaul UI with materialize and sass
+2. Improve and debug modules
+3. Drop gulp and move to webpack?
+4. Unit/E2E testing
+5. Dockerify
