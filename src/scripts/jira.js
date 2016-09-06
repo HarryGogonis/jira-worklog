@@ -142,30 +142,30 @@ const fetchJiraWorklog = function fetchJiraWorklog() {
       worklogIds.push(log.worklogId);
     }
 
-    jiraPost(`/worklog/list`, {ids: worklogIds}, function(postBody) {
+    jiraPost('/worklog/list', { ids: worklogIds }, (postBody) => {
       console.log('post returned:');
-      const worklogs = JSON.parse(postBody);
-      console.log(worklogs);
-      for (var worklog of worklogs) {
-        if (worklog.author.key !== localStorage.jiraUsername) {
-            //Skip everything except for my own
-            continue;
-          }
-          const worklogElement = buildWorklog(worklog);
-          const $existing = $(`[data-worklog-id=${worklog.id}]`);
-          if ($existing.length) {
-            $existing.replaceWith(worklogElement);
-          } else {
-            $('#timeline').append(worklogElement);
-          }
+      const worklogs = JSON.parse(postBody).filter((worklog) =>
+        worklog.author.key !== localStorage.jiraUsername
+      );
+
+      for (const worklog of worklogs) {
+        const worklogElement = ui.buildWorklog(worklog);
+        const $existing = $(`[data-worklog-id=${worklog.id}]`);
+
+        // TODO do this in UI module
+        if ($existing.length) {
+          $existing.replaceWith(worklogElement);
+        } else {
+          $('#timeline').append(worklogElement);
         }
-      }, function(postFailure) {
-        bottomNavText('Failed to load JIRA worklog details');
-        console.log(postFailure);
-      });
-  }, function (msg) {
-    bottomNavText('Failed to load JIRA worklog');
-    console.log(msg);
+      }
+    }, (error) => {
+      ui.bottomNavText('Failed to load JIRA worklog details');
+      console.log(error);
+    });
+  }, (error) => {
+    ui.bottomNavText('Failed to load JIRA worklog');
+    console.log(error);
   });
 };
 

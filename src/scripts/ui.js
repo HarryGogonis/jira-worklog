@@ -89,7 +89,7 @@ const buildCard = function buildCard(data) {
   return $div;
 };
 
-const buildWorklog = function(data) {
+const buildWorklog = function buildWorklog(data) {
   // TODO: load these after the issues have been fetched?
   const $issueKey = $(`[data-issue-id=${data.issueId}] .issue-key`).text() ||
   `Issue #${data.issueId}`;

@@ -1,0 +1,24 @@
+{
+  "name": "jira-worklog",
+  "description": "Simple HTML app to aid in logging work on JIRA issues",
+  "main": [
+    "dist/js/app.js"
+  ],
+  "authors": [
+    "Harry Gogonis <hgogonis@gmail.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/HarryGogonis/jira-worklog",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "materialize": "^0.97.7",
+    "jquery": "^3.1.0"
+  }
+}
